@@ -232,7 +232,7 @@ bool HttpServer::SendResponse(void) {
 
     char *buf = new char[len];
     memset(buf, '\0', len);
-    memcpy(buf, http_response_->GetData().c_str(), len);
+    memcpy(buf, data_ptr->data(), len);
     if(send(client_sockfd_, buf, len, 0) < 0) {
         LOG(ERROR) << "Send Response failed!";
         return false;

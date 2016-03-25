@@ -14,7 +14,7 @@
 
 class HttpClient {
 public:
-    HttpClient(void);
+    HttpClient(std::string);
     ~HttpClient(void);
 
     bool Run(void);

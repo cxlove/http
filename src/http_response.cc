@@ -113,7 +113,6 @@ void HttpResponse::GenerateHeader(void) {
     AddHeader("Accept-Ranges", "bytes");
     AddHeader("Content-Type", mime_type_);
     AddHeader("Connection", "close");
-    delete buf;
 }
 
 void HttpResponse::MergeData(void) {

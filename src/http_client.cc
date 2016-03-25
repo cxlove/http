@@ -16,10 +16,10 @@
 #include "http_request.h"
 #include "http_client.h"
 
-HttpClient::HttpClient(void) {
+HttpClient::HttpClient(std::string file_name) {
     port_ = 1024;
     server_ip_ = "127.0.0.1";
-    remote_file_name_ = local_file_name_ = "index.html";
+    remote_file_name_ = local_file_name_ = file_name;
     method_ = HttpMethod();
     method_.Set("GET");
 } 

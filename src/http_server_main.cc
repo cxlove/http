@@ -28,6 +28,6 @@ int main(int argc, char *argv[]) {
     }
     http_server->Run();
 
-    free(http_server);
+    delete http_server;
     return 0;
 }
