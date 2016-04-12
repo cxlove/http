@@ -6,6 +6,9 @@
  ************************************************************************/
 
 #include <string>
+#include <sys/wait.h>
+#include <arpa/inet.h>
+#include <glog/logging.h>
 #include "http.h"
 
 std::string ExtractMimeType(std::string file_name) {
@@ -96,4 +99,24 @@ std::string ExtractMimeType(std::string file_name) {
             break;
     }
     return mime_type;
+}
+
+bool IsIp(std::string ip_address) {
+    struct sockaddr_in sa;
+    int result = inet_pton(AF_INET, ip_address.c_str(), &(sa.sin_addr));
+    return result > 0;
+}
+
+bool IsIp(char *ip_address) {
+    struct sockaddr_in sa;
+    int result = inet_pton(AF_INET, ip_address, &(sa.sin_addr));
+    return result > 0;
+}
+
+void ChildProcessHandler(int num) {
+    int status;
+    int pid = waitpid(-1, &status, WNOHANG);
+    if (WIFEXITED(status)) {
+        LOG(INFO) << "The child " << pid << " exit with code " << WEXITSTATUS(status);
+    }
 }

@@ -16,10 +16,9 @@
 #include "http_request.h"
 #include "http_client.h"
 
-HttpClient::HttpClient(std::string file_name) {
-    port_ = 1024;
-    server_ip_ = "127.0.0.1";
-    remote_file_name_ = local_file_name_ = file_name;
+HttpClient::HttpClient(std::string request_url, std::string local_file_name) {
+    request_url_ = request_url;
+    local_file_name_ = "../" + local_file_name; // the working directory now is bin.
     method_ = HttpMethod();
     method_.Set("GET");
 } 
@@ -143,9 +142,58 @@ bool HttpClient::HandlerResponse(void) {
     return true;
 }
 
+bool HttpClient::ParseServerUrl(void) {
+    size_t now_index = 0, next_index;
+    std::string url_header = "http://";
+    if((next_index = request_url_.find_first_of(url_header)) != std::string::npos) {
+        if(next_index != now_index) {
+            LOG(ERROR) << "Failed to parse server url, " << url_header 
+                << " exists, but not at the begining of the url";
+            return false;
+        } 
+        now_index += url_header.size();
+    }
+    
+    // the format of valid url is host:port/filename, and the port can be omitted by default
+    if((next_index = request_url_.find_first_of("/", now_index)) != std::string::npos) {
+        std::string host_port = request_url_.substr(now_index, next_index - now_index);
+        now_index = next_index;
+        LOG(INFO) << host_port;
+        if((next_index = host_port.find_first_of(":")) != std::string::npos) {
+            host_name_ = host_port.substr(0, next_index);
+            port_ = atoi(host_port.substr(next_index + 1).c_str());
+        }
+        else {
+            host_name_ = host_port;
+        }
+        if(IsIp(host_name_)) {
+            server_ip_ = host_name_;
+        }
+        else {
+            LOG(ERROR) << "Not implemented, convert host into ip address.";
+            return false;
+        }
+    }
+    else {
+        LOG(ERROR) << "Failed to parse server url, there is no \"/\"" 
+            << " between server address and request file name";
+        return false;
+    }
+
+    remote_file_name_ = request_url_.substr(now_index + 1);
+    LOG(INFO) << "The request url is " << request_url_ << ", the host name is " 
+        << host_name_ << ", the server ip is " << server_ip_ << ", the port is " 
+        << port_;
+    return true;
+}
+
 bool HttpClient::Run(void) {
     http_request_ = new HttpRequest();
     http_response_ = new HttpResponse();
+    if(!ParseServerUrl()) {
+        LOG(ERROR) << "Run: Parse url failed!";
+        return false;
+    }
     if(!MergeRequest()) {
         LOG(ERROR) << "Run: Request invalid!";
         return false;

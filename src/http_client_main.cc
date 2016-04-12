@@ -14,14 +14,18 @@ int main (int argc, char *argv[]) {
     FLAGS_colorlogtostderr=true;
 
     HttpClient *http_client;
-    if(argc == 2) {
-        http_client = new HttpClient(argv[1]);
+    if(argc == 3) {
+        for(int i = 0; i < 100; i ++) {
+            char str[10];sprintf(str, "%d", i);
+            std::string path = argv[2] + std::string(str) + std::string(".html");
+            http_client = new HttpClient(argv[1], path);
+            http_client->Run();
+            delete http_client;
+        }
     }
     else {
         LOG(ERROR) << "Invalid paramenters!";
         return 0;
     }
-    http_client->Run();
-    delete http_client;
     return 0;
 }

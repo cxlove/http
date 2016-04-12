@@ -110,7 +110,7 @@ bool HttpRequest::Parse(void) {
      * CRLF
      * <request-body>*/
 
-    int now_index = 0, next_index;
+    size_t now_index = 0, next_index;
 
     // extract method
     next_index = data_.find_first_of(SPACE, now_index);
@@ -140,7 +140,6 @@ bool HttpRequest::Parse(void) {
         LOG(ERROR) << "Parse: Parse http request failed, empty header.";
         return false;
     }
-    std::cout << data_.substr(now_index) << std::endl;
 
     while(true) {
         // extract header 

@@ -64,6 +64,8 @@ bool HttpServer::CreateSocket(void) {
 bool HttpServer::StartListening(void) {
     sockaddr_in client_address;
     socklen_t client_address_length;
+    // To prevent zombie child process.
+    signal(SIGCHLD, ChildProcessHandler);
     while(true) {
         client_sockfd_ = accept(server_sockfd_, (sockaddr *)&client_address, &client_address_length);
         if(-1 == client_sockfd_) {
@@ -173,7 +175,10 @@ bool HttpServer::GenerateResponse(void) {
     }
     switch(method) {
         case GET:
-            HandlerGetRequest();
+            if(!HandlerGetRequest()) {
+                LOG(ERROR) << "Failed to handler GET request";
+                return false;
+            }
             break;
         default:
             http_response_->SetStatus(501);
@@ -184,6 +189,7 @@ bool HttpServer::GenerateResponse(void) {
 
 bool HttpServer::HandlerGetRequest(void) {
     std::string url = SERVER_ROOT + http_request_->GetUrl();
+    LOG(INFO) << "the request url is " << url;
     std::ifstream in;
     in.open(url.c_str(), std::ifstream::in);
     if(in.is_open()) {
