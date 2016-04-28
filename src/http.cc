@@ -102,9 +102,7 @@ std::string ExtractMimeType(std::string file_name) {
 }
 
 bool IsIp(std::string ip_address) {
-    struct sockaddr_in sa;
-    int result = inet_pton(AF_INET, ip_address.c_str(), &(sa.sin_addr));
-    return result > 0;
+    return IsIp(ip_address.c_str())
 }
 
 bool IsIp(char *ip_address) {

@@ -11,6 +11,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include "http.h"
+#include "socklib.h"
 #include "http_method.h"
 #include "http_response.h"
 #include "http_request.h"
@@ -47,7 +48,7 @@ bool HttpClient::CreateSocket(void) {
     sockaddr_in server_address;
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(port_);
-    server_address.sin_addr.s_addr = INADDR_ANY;
+    StrToIp(server_ip_, &server_address.sin_addr);
     if(connect(client_sockfd_, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
         LOG(ERROR) << "CreateSocket: Failed to connect!";
         return false;

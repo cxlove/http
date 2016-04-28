@@ -45,11 +45,11 @@ bool HttpServer::CreateSocket(void) {
         LOG(ERROR) << "CreateSocket: Failed to create socket!";
         return false;
     } 
-    sockaddr_in server_address;
+    struct sockaddr_in server_address;
     server_address.sin_family = AF_INET;
     server_address.sin_port = htons(port_);
     server_address.sin_addr.s_addr = INADDR_ANY;
-    if(bind(server_sockfd_, (sockaddr *)&server_address, sizeof(server_address)) < 0) {
+    if(bind(server_sockfd_, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
         LOG(ERROR) << "CreateSocket: Failed to bind port!";
         return false;
     }
@@ -67,7 +67,7 @@ bool HttpServer::StartListening(void) {
     // To prevent zombie child process.
     signal(SIGCHLD, ChildProcessHandler);
     while(true) {
-        client_sockfd_ = accept(server_sockfd_, (sockaddr *)&client_address, &client_address_length);
+        client_sockfd_ = accept(server_sockfd_, (struct sockaddr *)&client_address, &client_address_length);
         if(-1 == client_sockfd_) {
             LOG(ERROR) << "StartListening: Accept call failed!";
             return false;
