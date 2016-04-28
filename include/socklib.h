@@ -15,6 +15,10 @@
 struct sockaddr_in* SockfdToAddr(int);
 /* get the address family according to the sockfd */
 int SockfdToFamily(int);
+/* get the ip address from sockaddr */
+std::string AddrToIp(struct sockaddr_in *sin); 
+/* get the port from sockaddr */
+int AddrToPort(struct sockaddr_in *sin); 
 /* get the ip address according to the sockfd */
 std::string SockfdToIp(int);
 /* get the port according to the sockfd */

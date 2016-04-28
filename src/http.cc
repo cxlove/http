@@ -102,7 +102,7 @@ std::string ExtractMimeType(std::string file_name) {
 }
 
 bool IsIp(std::string ip_address) {
-    return IsIp(ip_address.c_str())
+    return IsIp(ip_address.c_str());
 }
 
 bool IsIp(char *ip_address) {

@@ -21,6 +21,14 @@ struct sockaddr_in* SockfdToAddr(int sockfd) {
     return sin;
 }
 
+std::string AddrToIp(struct sockaddr_in *sin) {
+    return inet_ntoa(sin->sin_addr);
+}
+
+int AddrToPort(struct sockaddr_in *sin) {
+    return ntohs(sin->sin_port);
+}
+
 int SockfdToFamily(int sockfd) {
     struct sockaddr_in *sin = SockfdToAddr(sockfd);
     if(NULL == sin) {
@@ -34,7 +42,7 @@ std::string SockfdToIp(int sockfd) {
     if(NULL == sin) {
         return "";
     }
-    return inet_ntoa(sin->sin_addr); 
+    return AddrToIp(sin);
 }
 
 int SockfdToPort(int sockfd) {
@@ -42,7 +50,7 @@ int SockfdToPort(int sockfd) {
     if(NULL == sin) {
         return -1;
     }
-    return ntohs(sin->sin_port);
+    return AddrToPort(sin);
 }
 
 int StrToIp(const char *str, struct in_addr *addr) {
